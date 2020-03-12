@@ -11,8 +11,7 @@ CELLS (reproduces Figure 2.1 and 2.2).
 * The FEniCS Project software: www.fenicsproject.org
 > The FEniCS Project is a collection of software for automated
   solution of partial differential equations using finite element
-  methods.
-> This software is compatible with FEniCS version xxxx.
+  methods. This software is compatible with FEniCS version xxxx.
 
 To get the environment needed (all dependencies etc.) to run the code, download
 and run the following docker container:
