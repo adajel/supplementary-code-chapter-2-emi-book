@@ -14,9 +14,7 @@ CELLS (reproduces Figure 2.1 and 2.2).
   solution of partial differential equations using finite element
   methods. 
 
-  cbcbeat is compatible with FEniCS version 2017.1.0 and 2017.2.0 (and
-  possibly 2016.1.0, 2016.2.0) or development versions in between
-  these releases of FEniCS.
+  This software is compatible with FEniCS version xxxx.
 
 To get the environment needed (all dependencies etc.) to run the code, download
 and run the following docker container:
