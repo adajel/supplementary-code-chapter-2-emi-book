@@ -1,31 +1,29 @@
-# README #
-
-### Repo for supplementary code ###
+# Repo for supplementary code #
 
 Supplementary code for Chapter 2 (A cell-based model for ionic electrodiffusion
 in excitable tissue) in EMI: CELL BASED MATHEMATICAL MODEL OF EXCITABLE
 CELLS (reproduces Figure 2.1 and 2.2).
-
-* Version 1.0
 
 ### Dependencies ###
 
 To get the environment needed (all dependencies etc.) to run the code, download
 and run the following docker container:
 
-    ceciledc/fenics_mixed_dimensional:05-02-20
+`ceciledc/fenics_mixed_dimensional:05-02-20`
 
-To run the code and reproduce the results, run
+To run the code and reproduce the results, execute:
 
 `main.py`
 
-### Contribution guidelines ###
+### License ###
 
-* Writing tests
-* Code review
-* Other guidelines
+The software is free: you can redistribute it and/or modify it under the terms
+of the GNU Lesser General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
 
-### Who do I talk to? ###
+### Community ###
 
-* Repo owner or admin
-* Other community or team contact
+Contact ada@simula.no for questions or to report issues with the software.
+
+
