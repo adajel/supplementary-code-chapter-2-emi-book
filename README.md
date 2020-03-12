@@ -1,25 +1,23 @@
 # README #
 
-### What is this repository for? ###
+### Repo for supplementary code ###
 
-* Supplementary code for Chapter 2 (A cell-based model for ionic electrodiffusion in
-excitable tissue) in EMI: CELL BASED MATHEMATICAL MODEL OF EXCITABLE CELLS.
+Supplementary code for Chapter 2 (A cell-based model for ionic electrodiffusion
+in excitable tissue) in EMI: CELL BASED MATHEMATICAL MODEL OF EXCITABLE
+CELLS (reproduces Figure 2.1 and 2.2).
 
 * Version 1.0
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
-### How do I get set up? ###
+### Dependencies ###
 
-* To get the environment needed (all dependencies etc.) to run the code,
-    download and run the following docker container:
+To get the environment needed (all dependencies etc.) to run the code, download
+and run the following docker container:
 
     ceciledc/fenics_mixed_dimensional:05-02-20
 
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+To run the code and reproduce the results, run
+
+`main.py`
 
 ### Contribution guidelines ###
 
