@@ -2,9 +2,9 @@
 
 Supplementary code for Chapter 2 (A cell-based model for ionic electrodiffusion
 in excitable tissue) in EMI: CELL BASED MATHEMATICAL MODEL OF EXCITABLE
-CELLS (reproduces Figure 2.1 and 2.2).
+CELLS that reproduces Figure 2.1 and 2.2.
 
-### Dependencies and ###
+### Dependencies and usage ###
 
 * Python 3
 
