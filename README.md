@@ -16,7 +16,7 @@ CELLS that reproduces Figure 2.1 and 2.2.
 Get the environment needed (all dependencies etc.), build and
 and run the Docker container *ceciledc/fenics_mixed_dimensional:05-02-20* by:
 
-* Installing docker: https://docs.docker.com/engine/installation/
+* Installing docker: www.docs.docker.com/engine/installation/
 * Build and start docker container with:
 
         docker run -t -v ~/:/home/fenics -i ceciledc/fenics_mixed_dimensional:05-02-20
@@ -35,5 +35,3 @@ version.
 ### Community ###
 
 Contact ada@simula.no for questions or to report issues with the software.
-
-
