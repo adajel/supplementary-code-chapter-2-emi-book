@@ -4,7 +4,7 @@ Supplementary code for Chapter 2 (A cell-based model for ionic electrodiffusion
 in excitable tissue) in EMI: CELL BASED MATHEMATICAL MODEL OF EXCITABLE
 CELLS that reproduces Figure 2.1 and 2.2.
 
-### Dependencies and usage ###
+### Dependencies ###
 
 * Python 3
 
@@ -20,6 +20,8 @@ and run the Docker container *ceciledc/fenics_mixed_dimensional:05-02-20* by:
 * Build and start docker container with:
 
         docker run -t -v ~/:/home/fenics -i ceciledc/fenics_mixed_dimensional:05-02-20
+
+### Usage ###
 
 To run the code and reproduce the results, execute:
 
