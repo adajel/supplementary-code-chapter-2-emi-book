@@ -13,19 +13,10 @@ CELLS (reproduces Figure 2.1 and 2.2).
   solution of partial differential equations using finite element
   methods. This software is compatible with FEniCS version xxxx.
 
+Get the environment needed (all dependencies etc.), build and
+and run the Docker container *ceciledc/fenics_mixed_dimensional:05-02-20* by:
 
-Installation with docker
-1. Install docker: https://docs.docker.com/engine/installation/
-2. Build docker container with
-       `docker build -t cbcbeat docker/
-3. Start docker container with
-       `docker run -i -t cbcbeat`
-
-To get the environment needed (all dependencies etc.), build and
-and run the Docker container *ceciledc/fenics_mixed_dimensional:05-02-20*,
-either using Docker:
-
-* Install docker: https://docs.docker.com/engine/installation/
+* Installing docker: https://docs.docker.com/engine/installation/
 * Build and start docker container with 
 `docker run -t -v ~/:/home/fenics -i ceciledc/fenics_mixed_dimensional:05-02-20`
 
