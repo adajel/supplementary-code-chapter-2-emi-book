@@ -14,12 +14,12 @@ CELLS that reproduces Figure 2.1 and 2.2.
   methods. This software is compatible with FEniCS version xxxx.
 
 Get the environment needed (all dependencies etc.), build and
-and run the Docker container *ceciledc/fenics_mixed_dimensional:05-02-20* by:
+and run the Docker container *ceciledc/fenics_mixed_dimensional:13-03-20* by:
 
 * Installing docker: https://docs.docker.com/engine/installation/
 * Build and start docker container with:
 
-        docker run -t -v ~/:/home/fenics -i ceciledc/fenics_mixed_dimensional:05-02-20
+        docker run -t -v ~/:/home/fenics -i ceciledc/fenics_mixed_dimensional:13-03-20
 
 ### Usage ###
 

@@ -43,9 +43,9 @@ if __name__ == "__main__":
     resolution = 0
 
     # time variables (seconds)
-    dt = 1.0e-4      # global time step (s)
-    Tstop = 1.0e-1   # end time (s)
-    n_steps_ode = 25 # number of steps for ODE solver
+    dt = 1.0e-4        # global time step (s)
+    Tstop = 1.0e-1     # end time (s)
+    n_steps_ode = 25   # number of steps for ODE solver
 
     # physical parameters
     C_M = 0.02         # capacitance (F)

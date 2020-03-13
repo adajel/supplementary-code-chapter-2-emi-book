@@ -165,22 +165,14 @@ class Plotter:
         phi_M_emi = self.get_time_series_gamma(dt, T, self.f_emi, x_M, y_M, z_M)
         # get time series - ECS ion concentrations
         Na, K, phi_E = self.get_time_series_ECS(dt, T, self.f, x_E, y_E, z_E)
-        _, _, phi_E_emi = self.get_time_series_ECS(
-            dt, T, self.f_emi, x_E, y_E, z_E, EMI=True
-        )
+        _, _, phi_E_emi = self.get_time_series_ECS(dt, T, self.f_emi, x_E, y_E, z_E, EMI=True)
 
         # get time series - membrane potential
         phi_M_hyper = self.get_time_series_gamma(dt, T, self.f_hyper, x_M, y_M, z_M)
-        phi_M_emi_hyper = self.get_time_series_gamma(
-            dt, T, self.f_emi_hyper, x_M, y_M, z_M
-        )
+        phi_M_emi_hyper = self.get_time_series_gamma(dt, T, self.f_emi_hyper, x_M, y_M, z_M)
         # get time series - ion concentrations
-        Na_hyper, K_hyper, phi_E_hyper = self.get_time_series_ECS(
-            dt, T, self.f_hyper, x_E, y_E, z_E
-        )
-        _, _, phi_E_emi_hyper = self.get_time_series_ECS(
-            dt, T, self.f_emi_hyper, x_E, y_E, z_E, EMI=True
-        )
+        Na_hyper, K_hyper, phi_E_hyper = self.get_time_series_ECS(dt, T, self.f_hyper, x_E, y_E, z_E)
+        _, _, phi_E_emi_hyper = self.get_time_series_ECS(dt, T, self.f_emi_hyper, x_E, y_E, z_E, EMI=True)
 
         # create figure for potential
         fig = plt.figure(figsize=(12 / 1.5, 25 / 3.0))
