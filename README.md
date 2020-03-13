@@ -1,4 +1,4 @@
-# Repo for supplementary code #
+# Supplementary code Chapter 2 #
 
 Supplementary code for Chapter 2 (A cell-based model for ionic electrodiffusion
 in excitable tissue) in EMI: CELL BASED MATHEMATICAL MODEL OF EXCITABLE
