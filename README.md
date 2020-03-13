@@ -8,7 +8,7 @@ CELLS that reproduces Figure 2.1 and 2.2.
 
 * Python 3
 
-* The FEniCS Project software: www.fenicsproject.org
+* The FEniCS Project software: https://fenicsproject.org
 > The FEniCS Project is a collection of software for automated
   solution of partial differential equations using finite element
   methods. This software is compatible with FEniCS version xxxx.
@@ -16,7 +16,7 @@ CELLS that reproduces Figure 2.1 and 2.2.
 Get the environment needed (all dependencies etc.), build and
 and run the Docker container *ceciledc/fenics_mixed_dimensional:05-02-20* by:
 
-* Installing docker: www.docs.docker.com/engine/installation/
+* Installing docker: https://docs.docker.com/engine/installation/
 * Build and start docker container with:
 
         docker run -t -v ~/:/home/fenics -i ceciledc/fenics_mixed_dimensional:05-02-20
