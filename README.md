@@ -18,7 +18,7 @@ and run the Docker container *ceciledc/fenics_mixed_dimensional:05-02-20* by:
 
 * Installing docker: https://docs.docker.com/engine/installation/
 * Build and start docker container with 
-`docker run -t -v ~/:/home/fenics -i ceciledc/fenics_mixed_dimensional:05-02-20`
+    docker run -t -v ~/:/home/fenics -i ceciledc/fenics_mixed_dimensional:05-02-20
 
 To run the code and reproduce the results, execute:
 
