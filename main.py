@@ -191,7 +191,7 @@ if __name__ == "__main__":
     S_2a.solve_system_HH(n_steps_ode, filename=fname_knpemi_hyper)  # solve
 
     # Run EMI hyperactivity
-    sys.stdout.write("\n--------------------------------")
+    sys.stdout.write("\n\n--------------------------------")
     sys.stdout.write("\nRunning EMI hyperactivity")
     sys.stdout.write("\n--------------------------------\n")
     t_2b = Constant(0.0)  # time constant
@@ -204,7 +204,7 @@ if __name__ == "__main__":
     S_2b.solve_system_HH(n_steps_ode, filename=fname_emi_hyper)  # solve
 
     # Run KNP-EMI normal activity
-    sys.stdout.write("\n--------------------------------")
+    sys.stdout.write("\n\n--------------------------------")
     sys.stdout.write("\nRunning KNP-EMI normal activity")
     sys.stdout.write("\n--------------------------------\n")
     t_1a = Constant(0.0)  # time constant
@@ -220,7 +220,7 @@ if __name__ == "__main__":
     S_1a.solve_system_HH(n_steps_ode, filename=fname_knpemi)  # solve
 
     # Run EMI normal activity
-    sys.stdout.write("\n--------------------------------")
+    sys.stdout.write("\n\n--------------------------------")
     sys.stdout.write("\nRunning EMI normal activity")
     sys.stdout.write("\n--------------------------------\n")
     t_1b = Constant(0.0)  # time constant
@@ -239,7 +239,7 @@ if __name__ == "__main__":
     f4 = fname_emi_hyper + "results.h5"
 
     # create plotter and generate plots
-    sys.stdout.write("\n--------------------------------")
+    sys.stdout.write("\n\n--------------------------------")
     sys.stdout.write("\nCreating plots")
     sys.stdout.write("\n--------------------------------\n")
     P = plotter.Plotter(resolution, Tstop, dt * 10, f1, f2, f3, f4)
