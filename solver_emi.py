@@ -12,16 +12,18 @@ parameters["form_compiler"]["cpp_optimize_flags"] = " ".join(flags)
 
 
 class Solver:
-    """ initialize solver """
-
     def __init__(self, t, **params):
+        """ Initialize solver """
+
         self.params = params    # set parameters
         self.dt = params["dt"]  # set global time step (s)
         self.t = t              # set time constant (s)
+
         return
 
     def setup_domain(self, mesh_path, subdomains_path, surfaces_path):
-        """ setup mortar domain """
+        """ Setup mortar domain """
+
         # get and set mesh
         mesh = Mesh(mesh_path)
         self.mesh = mesh
@@ -65,7 +67,8 @@ class Solver:
         return
 
     def create_variational_form(self, splitting_scheme=False):
-        """ create a mortar variational formulation for the KNP-EMI equations """
+        """ Create a mortar variational formulation for the EMI equations """
+
         params = self.params
         # get parameters
         dt = params["dt"]                 # global time step (s)
@@ -150,7 +153,8 @@ class Solver:
         return
 
     def solve_for_time_step(self):
-        """ solve system for one global time step dt"""
+        """ Solve system for one global time step """
+
         dt = self.params["dt"]  # global time step (s)
 
         system = assemble_mixed_system(self.a == self.L, self.wh, self.bcs)
@@ -208,47 +212,59 @@ class Solver:
         )
         # updates problems time t
         self.t.assign(float(self.t + dt))
+
         return
 
     def alpha_n(self, V_M):
+        """ Rate coefficient activation Potassium (HH) """
+
         V_rest = self.params["V_rest"]  # resting potential (V)
         V = 1000 * (V_M - V_rest)       # convert from mV to V
-        # rate coefficient
+
         return 0.01e3 * (10.0 - V) / (exp((10.0 - V) / 10.0) - 1.0)
 
     def beta_n(self, V_M):
+        """ Rate coefficient activation Potassium (HH) """
+
         V_rest = self.params["V_rest"]  # resting potential (V)
         V = 1000 * (V_M - V_rest)       # convert from mV to V
-        # rate coefficient
+
         return 0.125e3 * exp(-V / 80.0)
 
     def alpha_m(self, V_M):
+        """ Rate coefficient activation Sodium (HH) """
+
         V_rest = self.params["V_rest"]  # resting potential (V)
         V = 1000 * (V_M - V_rest)       # convert from mV to V
-        # rate coefficient
+
         return 0.1e3 * (25.0 - V) / (exp((25.0 - V) / 10.0) - 1)
 
     def beta_m(self, V_M):
+        """ Rate coefficient activation Sodium (HH) """
+
         V_rest = self.params["V_rest"]  # resting potential (V)
         V = 1000 * (V_M - V_rest)       # convert from mV to V
-        # rate coefficient
+
         return 4.0e3 * exp(-V / 18.0)
 
     def alpha_h(self, V_M):
+        """ Rate coefficient inactivation Sodium (HH) """
         V_rest = self.params["V_rest"]  # resting potential (V)
         V = 1000 * (V_M - V_rest)       # convert from mV to V
-        # rate coefficient
+
         return 0.07e3 * exp(-V / 20.0)
 
     def beta_h(self, V_M):
+        """ Rate coefficient inactivation Sodium (HH) """
         V_rest = self.params["V_rest"]  # resting potential (V)
         V = 1000 * (V_M - V_rest)       # convert from mV to V
-        # rate coefficient
+
         return 1.0e3 / (exp((30.0 - V) / 10.0) + 1)
 
     def solve_system_HH(self, n_steps_ode, filename):
-        """ solve KNP-EMI with Hodgkin Huxley dynamics on membrane using a
+        """ Solve KNP-EMI with Hodgkin Huxley dynamics on membrane using a
             splitting scheme """
+
         # physical parameters
         C_M = self.params["C_M"]             # capacitance (F/m)
         g_Na_bar = self.params["g_Na_bar"]   # Na conductivity Hodgkin Huxley (S/m^2)
@@ -327,10 +343,12 @@ class Solver:
         # close result files
         self.close_h5()
         self.close_xdmf()
+
         return
 
     def initialize_h5_savefile(self, filename):
-        """ initialize h5 file """
+        """ Initialize h5 file """
+
         self.h5_idx = 0
         self.h5_file = HDF5File(self.interior_mesh.mpi_comm(), filename, "w")
         self.h5_file.write(self.mesh, "/mesh")
@@ -341,24 +359,30 @@ class Solver:
         self.h5_file.write(self.u_p.sub(0), "/interior_solution", self.h5_idx)
         self.h5_file.write(self.u_p.sub(1), "/exterior_solution", self.h5_idx)
         self.h5_file.write(self.phi_M_prev, "/membrane_potential", self.h5_idx)
+
         return
 
     def save_h5(self):
-        """ save results to h5 file """
+        """ Save results to h5 file """
+
         self.h5_idx += 1
         print(self.h5_idx)
         self.h5_file.write(self.u_p.sub(0), "/interior_solution", self.h5_idx)
         self.h5_file.write(self.u_p.sub(1), "/exterior_solution", self.h5_idx)
         self.h5_file.write(self.phi_M_prev, "/membrane_potential", self.h5_idx)
+
         return
 
     def close_h5(self):
-        """ close h5 file """
+        """ Close h5 file """
+
         self.h5_file.close()
+
         return
 
     def initialize_xdmf_savefile(self, file_prefix):
-        """ initialize xdmf files """
+        """ Initialize xdmf files """
+
         self.interior_xdmf_files = []
         self.exterior_xdmf_files = []
 
@@ -381,22 +405,27 @@ class Solver:
         self.membrane_xdmf_file.parameters["rewrite_function_mesh"] = False
         self.membrane_xdmf_file.parameters["flush_output"] = True
         self.membrane_xdmf_file.write(self.phi_M_prev, self.t.values()[0])
+
         return
 
     def save_xdmf(self):
-        """ save results to xdmf files """
+        """ Save results to xdmf files """
+
         for i in range(len(self.interior_xdmf_files)):
             self.interior_xdmf_files[i].write(self.u_p.sub(0), self.t.values()[0])
             self.exterior_xdmf_files[i].write(
                 self.u_p.sub(1).split()[i], self.t.values()[0]
             )
         self.membrane_xdmf_file.write(self.phi_M_prev, self.t.values()[0])
+
         return
 
     def close_xdmf(self):
-        """ close xdmf files """
+        """ Close xdmf files """
+
         for i in range(len(self.interior_xdmf_files)):
             self.interior_xdmf_files[i].close()
             self.exterior_xdmf_files[i].close()
         self.membrane_xdmf_file.close()
+
         return

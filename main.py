@@ -12,7 +12,8 @@ import plotter as plotter
 
 
 def g_syn_hyper(g_syn_bar, a_syn, t):
-    """ stimulate axon A, normal activity """
+    """ Stimulate axon, hyper activity """
+
     g_syn = Expression(
         "g_syn_bar*exp(-fmod(t,0.02)/a_syn)*\
                         (x[0] < 20.0e-6)*(x[1] < 0.5e-6)*(x[2] < 0.5e-6)",
@@ -21,11 +22,12 @@ def g_syn_hyper(g_syn_bar, a_syn, t):
         t=t,
         degree=4,
     )
+
     return g_syn
 
 
 def g_syn(g_syn_bar, a_syn, t):
-    """ stimulate axon A, normal activity """
+    """ Stimulate axon, normal activity """
     g_syn = Expression(
         "g_syn_bar*exp(-fmod(t,0.02)/a_syn)*\
                         (x[0] < 20.0e-6)*(x[1] < 0.5e-6)*(x[2] < 0.5e-6)*\
@@ -35,10 +37,12 @@ def g_syn(g_syn_bar, a_syn, t):
         t=t,
         degree=4,
     )
+
     return g_syn
 
 
 if __name__ == "__main__":
+
     # resolution factor of mesh
     resolution = 0
 
@@ -170,31 +174,6 @@ if __name__ == "__main__":
         script = "make_mesh.py "  # script
         os.system("python " + script + " " + str(resolution))  # run script
 
-    # Run KNP-EMI normal activity
-    sys.stdout.write("\nRunning KNP-EMI normal activity \n")
-    t_1a = Constant(0.0)  # time constant
-    # file for results
-    fname_knpemi = "results/knpemi/res_" + str(resolution) + "/"  # filename for results
-    # set ion channel conductivity
-    ion_list[0]["g_k"] = g_Na_leak + g_syn(g_syn_bar, a_syn, t_1a)  # Na
-    ion_list[1]["g_k"] = g_K_leak  # K
-    ion_list[2]["g_k"] = g_Cl_leak  # Cl
-    # solve system
-    S_1a = solver.Solver(ion_list, t_1a, **params)  # create solver
-    S_1a.setup_domain(mesh, subdomains, surfaces)  # setup domains
-    S_1a.solve_system_HH(n_steps_ode, filename=fname_knpemi)  # solve
-
-    # Run EMI normal activity
-    sys.stdout.write("\nRunning EMI normal activity \n")
-    t_1b = Constant(0.0)  # time constant
-    fname_emi = "results/emi/res_" + str(resolution) + "/"  # filename for results
-    # set synaptic current
-    params["g_ch_syn"] = g_syn(g_syn_bar, a_syn, t_1b)
-    # solve system
-    S_1b = solver_emi.Solver(t_1b, **params)  # create solver
-    S_1b.setup_domain(mesh, subdomains, surfaces)  # setup domains
-    S_1b.solve_system_HH(n_steps_ode, filename=fname_emi)  # solve
-
     # Run KNP-EMI hyperactivity
     sys.stdout.write("\nRunning KNP-EMI hyperactivity \n")
     t_2a = Constant(0.0)  # time constant
@@ -220,13 +199,38 @@ if __name__ == "__main__":
     S_2b.setup_domain(mesh, subdomains, surfaces)  # setup domains
     S_2b.solve_system_HH(n_steps_ode, filename=fname_emi_hyper)  # solve
 
+    # Run KNP-EMI normal activity
+    sys.stdout.write("\nRunning KNP-EMI normal activity \n")
+    t_1a = Constant(0.0)  # time constant
+    # file for results
+    fname_knpemi = "results/knpemi/res_" + str(resolution) + "/"  # filename for results
+    # set ion channel conductivity
+    ion_list[0]["g_k"] = g_Na_leak + g_syn(g_syn_bar, a_syn, t_1a)  # Na
+    ion_list[1]["g_k"] = g_K_leak  # K
+    ion_list[2]["g_k"] = g_Cl_leak  # Cl
+    # solve system
+    S_1a = solver.Solver(ion_list, t_1a, **params)  # create solver
+    S_1a.setup_domain(mesh, subdomains, surfaces)  # setup domains
+    S_1a.solve_system_HH(n_steps_ode, filename=fname_knpemi)  # solve
+
+    # Run EMI normal activity
+    sys.stdout.write("\nRunning EMI normal activity \n")
+    t_1b = Constant(0.0)  # time constant
+    fname_emi = "results/emi/res_" + str(resolution) + "/"  # filename for results
+    # set synaptic current
+    params["g_ch_syn"] = g_syn(g_syn_bar, a_syn, t_1b)
+    # solve system
+    S_1b = solver_emi.Solver(t_1b, **params)  # create solver
+    S_1b.setup_domain(mesh, subdomains, surfaces)  # setup domains
+    S_1b.solve_system_HH(n_steps_ode, filename=fname_emi)  # solve
+
     # files containing solutions
     f1 = fname_knpemi + "results.h5"
     f2 = fname_emi + "results.h5"
     f3 = fname_knpemi_hyper + "results.h5"
     f4 = fname_emi_hyper + "results.h5"
 
-    sys.stdout.write("\nCreating plots \n")
     # create plotter and generate plots
+    sys.stdout.write("\nCreating plots \n")
     P = plotter.Plotter(resolution, Tstop, dt * 10, f1, f2, f3, f4)
     P.make_figures()

@@ -302,8 +302,8 @@ class Solver:
         return
 
     def solve_for_time_step(self):
+        """ Solve system for one global time step """
 
-        """ solve system for one global time step dt """
         dt = self.params["dt"]                   # global time step (s)
         F = self.params["F"]                     # Faraday's constant (C/mol)
         R = self.params["R"]                     # Gas constant (J/(K mol))
@@ -406,44 +406,56 @@ class Solver:
         return
 
     def alpha_n(self, V_M):
+        """ Rate coefficient activation Potassium (HH) """
+
         V_rest = self.params["V_rest"]  # resting potential (V)
         V = 1000 * (V_M - V_rest)       # convert from mV to V
-        # rate coefficient
+
         return 0.01e3 * (10.0 - V) / (exp((10.0 - V) / 10.0) - 1.0)
 
     def beta_n(self, V_M):
+        """ Rate coefficient activation Potassium (HH) """
+
         V_rest = self.params["V_rest"]  # resting potential (V)
         V = 1000 * (V_M - V_rest)       # convert from mV to V
-        # rate coefficient
+
         return 0.125e3 * exp(-V / 80.0)
 
     def alpha_m(self, V_M):
+        """ Rate coefficient activation Sodium (HH) """
         V_rest = self.params["V_rest"]  # resting potential (V)
         V = 1000 * (V_M - V_rest)       # convert from mV to V
-        # rate coefficient
+
         return 0.1e3 * (25.0 - V) / (exp((25.0 - V) / 10.0) - 1)
 
     def beta_m(self, V_M):
+        """ Rate coefficient activation Sodium (HH) """
+
         V_rest = self.params["V_rest"]  # resting potential (V)
         V = 1000 * (V_M - V_rest)       # convert from mV to V
-        # rate coefficient
+
         return 4.0e3 * exp(-V / 18.0)
 
     def alpha_h(self, V_M):
+        """ Rate coefficient inactivation Sodium (HH) """
+
         V_rest = self.params["V_rest"]  # resting potential (V)
         V = 1000 * (V_M - V_rest)       # convert from mV to V
-        # rate coefficient
+
         return 0.07e3 * exp(-V / 20.0)
 
     def beta_h(self, V_M):
+        """ Rate coefficient inactivation Sodium (HH) """
+
         V_rest = self.params["V_rest"]  # resting potential (V)
         V = 1000 * (V_M - V_rest)       # convert from mV to V
-        # rate coefficient
+
         return 1.0e3 / (exp((30.0 - V) / 10.0) + 1)
 
     def solve_system_HH(self, n_steps_ode, filename, dirichlet_bcs=False):
-        """ solve KNP-EMI with Hodgkin Huxley (HH) dynamics on membrane using a
+        """ Solve KNP-EMI with Hodgkin Huxley (HH) dynamics on membrane using a
             two-step splitting scheme """
+
         # physical parameters
         C_M = self.params["C_M"]                # capacitance (F/m)
         g_Na_bar = self.params["g_Na_bar"]      # Na conductivity HH (S/m^2)
@@ -521,7 +533,7 @@ class Solver:
         return
 
     def initialize_h5_savefile(self, filename):
-        """ initialize h5 file """
+        """ Initialize h5 file """
 
         self.h5_idx = 0
         self.h5_file = HDF5File(self.interior_mesh.mpi_comm(), filename, "w")
@@ -537,7 +549,7 @@ class Solver:
         return
 
     def save_h5(self):
-        """ save results to h5 file """
+        """ Save results to h5 file """
 
         self.h5_idx += 1
         self.h5_file.write(self.u_p.sub(0), "/interior_solution", self.h5_idx)
@@ -547,14 +559,14 @@ class Solver:
         return
 
     def close_h5(self):
-        """ close h5 file """
+        """ Close h5 file """
 
         self.h5_file.close()
 
         return
 
     def initialize_xdmf_savefile(self, file_prefix):
-        """ initialize xdmf file """
+        """ Initialize xdmf file """
 
         self.interior_xdmf_files = []
         self.exterior_xdmf_files = []
@@ -583,7 +595,7 @@ class Solver:
         return
 
     def save_xdmf(self):
-        """ save results to xdmf files """
+        """ Save results to xdmf files """
 
         for i in range(len(self.interior_xdmf_files)):
             self.interior_xdmf_files[i].write(self.u_p.sub(0).split()[i], self.t.values()[0])
@@ -593,7 +605,7 @@ class Solver:
         return
 
     def close_xdmf(self):
-        """ close xdmf files """
+        """ Close xdmf files """
 
         for i in range(len(self.interior_xdmf_files)):
             self.interior_xdmf_files[i].close()

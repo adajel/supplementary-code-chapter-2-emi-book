@@ -17,6 +17,7 @@ mpl.rcParams["image.cmap"] = "jet"
 
 class Plotter:
     def __init__(self, res_2D, T, dt, f, f_emi, f_hyper, f_emi_hyper):
+
         # plotting parameters
         self.res_2D = res_2D # mesh resolution
         self.T = T           # end time
@@ -34,7 +35,7 @@ class Plotter:
         return
 
     def get_plottable_ECS_function(self, h5_fname, n, i, scale=1.0):
-        """ get plottable function of extracellular concentration or potential """
+        """ Get plottable function of extracellular concentration or potential """
 
         mesh = Mesh()
         subdomains = MeshFunction("size_t", mesh, 2)
@@ -76,6 +77,7 @@ class Plotter:
 
     def get_time_series_ECS(self, dt, T, fname, x, y, z, EMI=False):
         """ Return list of values in given point (x, y, z) over time """
+
         # read data file
         hdf5file = HDF5File(MPI.comm_world, fname, "r")
 
@@ -127,6 +129,7 @@ class Plotter:
 
     def get_time_series_gamma(self, dt, T, fname, x, y, z):
         """ Return list of values in given point (x, y, z) over time """
+
         # read data file
         hdf5file = HDF5File(MPI.comm_world, fname, "r")
 
@@ -150,6 +153,7 @@ class Plotter:
 
     def make_figures(self):
         """ Create plots of potentials and ion concentrations """
+
         # set time parameters
         dt = self.dt
         T = self.T
