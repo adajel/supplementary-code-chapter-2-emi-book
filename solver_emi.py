@@ -366,7 +366,6 @@ class Solver:
         """ Save results to h5 file """
 
         self.h5_idx += 1
-        print(self.h5_idx)
         self.h5_file.write(self.u_p.sub(0), "/interior_solution", self.h5_idx)
         self.h5_file.write(self.u_p.sub(1), "/exterior_solution", self.h5_idx)
         self.h5_file.write(self.phi_M_prev, "/membrane_potential", self.h5_idx)
