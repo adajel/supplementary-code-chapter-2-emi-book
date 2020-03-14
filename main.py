@@ -175,9 +175,9 @@ if __name__ == "__main__":
         os.system("python " + script + " " + str(resolution))  # run script
 
     # Run KNP-EMI hyperactivity
-    sys.stdout.write("\n ----------------------------------- \n")
-    sys.stdout.write("\nRunning KNP-EMI hyperactivity \n")
-    sys.stdout.write("\n ----------------------------------- \n")
+    sys.stdout.write("\n--------------------------------")
+    sys.stdout.write("\nRunning KNP-EMI hyperactivity")
+    sys.stdout.write("\n--------------------------------\n")
     t_2a = Constant(0.0)  # time constant
     # file for results
     fname_knpemi_hyper = ("results/knpemi_hyper/res_" + str(resolution) + "/")  # filename for results
@@ -186,27 +186,27 @@ if __name__ == "__main__":
     ion_list[1]["g_k"] = g_K_leak  # K
     ion_list[2]["g_k"] = g_Cl_leak  # Cl
     # solve system
-    S_2a = solver.Solver(ion_list, t_2a, **params)  # create solver
+    S_2a = solver.Solver(ion_list, t_2a, **params) # create solver
     S_2a.setup_domain(mesh, subdomains, surfaces)  # setup domains
     S_2a.solve_system_HH(n_steps_ode, filename=fname_knpemi_hyper)  # solve
 
     # Run EMI hyperactivity
-    sys.stdout.write("\n ----------------------------------- \n")
-    sys.stdout.write("\nRunning EMI hyperactivity \n")
-    sys.stdout.write("\n ----------------------------------- \n")
+    sys.stdout.write("\n--------------------------------")
+    sys.stdout.write("\nRunning EMI hyperactivity")
+    sys.stdout.write("\n--------------------------------\n")
     t_2b = Constant(0.0)  # time constant
     fname_emi_hyper = ("results/emi_hyper/res_" + str(resolution) + "/")  # filename for results
     # set synaptic current
     params["g_ch_syn"] = g_syn_hyper(g_syn_bar, a_syn, t_2b)
     # solve system
-    S_2b = solver_emi.Solver(t_2b, **params)  # create solver
+    S_2b = solver_emi.Solver(t_2b, **params)       # create solver
     S_2b.setup_domain(mesh, subdomains, surfaces)  # setup domains
     S_2b.solve_system_HH(n_steps_ode, filename=fname_emi_hyper)  # solve
 
     # Run KNP-EMI normal activity
-    sys.stdout.write("\n ----------------------------------- \n")
-    sys.stdout.write("\nRunning KNP-EMI normal activity \n")
-    sys.stdout.write("\n ----------------------------------- \n")
+    sys.stdout.write("\n--------------------------------")
+    sys.stdout.write("\nRunning KNP-EMI normal activity")
+    sys.stdout.write("\n--------------------------------\n")
     t_1a = Constant(0.0)  # time constant
     # file for results
     fname_knpemi = "results/knpemi/res_" + str(resolution) + "/"  # filename for results
@@ -215,21 +215,21 @@ if __name__ == "__main__":
     ion_list[1]["g_k"] = g_K_leak  # K
     ion_list[2]["g_k"] = g_Cl_leak  # Cl
     # solve system
-    S_1a = solver.Solver(ion_list, t_1a, **params)  # create solver
+    S_1a = solver.Solver(ion_list, t_1a, **params) # create solver
     S_1a.setup_domain(mesh, subdomains, surfaces)  # setup domains
     S_1a.solve_system_HH(n_steps_ode, filename=fname_knpemi)  # solve
 
     # Run EMI normal activity
-    sys.stdout.write("\n ----------------------------------- \n")
-    sys.stdout.write("\nRunning EMI normal activity \n")
-    sys.stdout.write("\n ----------------------------------- \n")
+    sys.stdout.write("\n--------------------------------")
+    sys.stdout.write("\nRunning EMI normal activity")
+    sys.stdout.write("\n--------------------------------\n")
     t_1b = Constant(0.0)  # time constant
     fname_emi = "results/emi/res_" + str(resolution) + "/"  # filename for results
     # set synaptic current
     params["g_ch_syn"] = g_syn(g_syn_bar, a_syn, t_1b)
     # solve system
-    S_1b = solver_emi.Solver(t_1b, **params)  # create solver
-    S_1b.setup_domain(mesh, subdomains, surfaces)  # setup domains
+    S_1b = solver_emi.Solver(t_1b, **params)      # create solver
+    S_1b.setup_domain(mesh, subdomains, surfaces) # setup domains
     S_1b.solve_system_HH(n_steps_ode, filename=fname_emi)  # solve
 
     # files containing solutions
@@ -239,8 +239,8 @@ if __name__ == "__main__":
     f4 = fname_emi_hyper + "results.h5"
 
     # create plotter and generate plots
-    sys.stdout.write("\n ----------------------------------- \n")
-    sys.stdout.write("\nCreating plots \n")
-    sys.stdout.write("\n ----------------------------------- \n")
+    sys.stdout.write("\n--------------------------------")
+    sys.stdout.write("\nCreating plots")
+    sys.stdout.write("\n--------------------------------\n")
     P = plotter.Plotter(resolution, Tstop, dt * 10, f1, f2, f3, f4)
     P.make_figures()
