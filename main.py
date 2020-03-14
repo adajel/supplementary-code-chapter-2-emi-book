@@ -175,7 +175,9 @@ if __name__ == "__main__":
         os.system("python " + script + " " + str(resolution))  # run script
 
     # Run KNP-EMI hyperactivity
+    sys.stdout.write("\n"-----------------------------------" \n")
     sys.stdout.write("\nRunning KNP-EMI hyperactivity \n")
+    sys.stdout.write("\n"-----------------------------------" \n")
     t_2a = Constant(0.0)  # time constant
     # file for results
     fname_knpemi_hyper = ("results/knpemi_hyper/res_" + str(resolution) + "/")  # filename for results
@@ -189,7 +191,9 @@ if __name__ == "__main__":
     S_2a.solve_system_HH(n_steps_ode, filename=fname_knpemi_hyper)  # solve
 
     # Run EMI hyperactivity
+    sys.stdout.write("\n"-----------------------------------" \n")
     sys.stdout.write("\nRunning EMI hyperactivity \n")
+    sys.stdout.write("\n"-----------------------------------" \n")
     t_2b = Constant(0.0)  # time constant
     fname_emi_hyper = ("results/emi_hyper/res_" + str(resolution) + "/")  # filename for results
     # set synaptic current
@@ -200,7 +204,9 @@ if __name__ == "__main__":
     S_2b.solve_system_HH(n_steps_ode, filename=fname_emi_hyper)  # solve
 
     # Run KNP-EMI normal activity
+    sys.stdout.write("\n"-----------------------------------" \n")
     sys.stdout.write("\nRunning KNP-EMI normal activity \n")
+    sys.stdout.write("\n"-----------------------------------" \n")
     t_1a = Constant(0.0)  # time constant
     # file for results
     fname_knpemi = "results/knpemi/res_" + str(resolution) + "/"  # filename for results
@@ -214,7 +220,9 @@ if __name__ == "__main__":
     S_1a.solve_system_HH(n_steps_ode, filename=fname_knpemi)  # solve
 
     # Run EMI normal activity
+    sys.stdout.write("\n"-----------------------------------" \n")
     sys.stdout.write("\nRunning EMI normal activity \n")
+    sys.stdout.write("\n"-----------------------------------" \n")
     t_1b = Constant(0.0)  # time constant
     fname_emi = "results/emi/res_" + str(resolution) + "/"  # filename for results
     # set synaptic current
@@ -231,6 +239,8 @@ if __name__ == "__main__":
     f4 = fname_emi_hyper + "results.h5"
 
     # create plotter and generate plots
+    sys.stdout.write("\n"-----------------------------------" \n")
     sys.stdout.write("\nCreating plots \n")
+    sys.stdout.write("\n"-----------------------------------" \n")
     P = plotter.Plotter(resolution, Tstop, dt * 10, f1, f2, f3, f4)
     P.make_figures()
