@@ -6,13 +6,6 @@ CELLS that reproduces Figure 2.1 and 2.2.
 
 ### Dependencies ###
 
-* Python 3
-
-* The FEniCS Project software: https://fenicsproject.org
-> The FEniCS Project is a collection of software for automated
-  solution of partial differential equations using finite element
-  methods. This software is compatible with FEniCS version xxxx.
-
 Get the environment needed (all dependencies etc.), build and
 and run the Docker container *ceciledc/fenics_mixed_dimensional:13-03-20* by:
 
