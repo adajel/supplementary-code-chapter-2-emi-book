@@ -12,7 +12,6 @@ parameters["form_compiler"]["cpp_optimize"] = True
 flags = ["-O3", "-ffast-math", "-march=native"]
 parameters["form_compiler"]["cpp_optimize_flags"] = " ".join(flags)
 
-
 class Solver:
     def __init__(self, ion_list, t, **params):
         """ initialize solver """
@@ -211,7 +210,7 @@ class Solver:
         # add potassium (K) contribution
         self.ion_list[1]["I_ch"] += -2 * self.I_pump + self.I_NKCl + self.I_KCC2
         # add chloride (Cl) contribution
-        self.ion_list[2]["I_ch"] += +2 * self.I_NKCl + self.I_KCC2
+        self.ion_list[2]["I_ch"] += 2 * self.I_NKCl + self.I_KCC2
 
         # Initialize the variational form
         a00 = 0; a01 = 0; a02 = 0; L0 = 0
@@ -292,6 +291,10 @@ class Solver:
         if not splitting_scheme:
             L2 += -dt / C_M * inner(I_ch, q_IM) * dxGamma
 
+        # Solution software does not support empty blocks -> hack
+        a01 = Constant(0.0)*ke*vki*dxGamma
+        a10 = Constant(0.0)*ki*vke*dxGamma
+
         # gather weak form in matrix structure
         self.a = a00 + a01 + a02 + a10 + a11 + a12 + a20 + a21 + a22
         self.L = L0 + L1 + L2
@@ -314,10 +317,26 @@ class Solver:
         g_KCC2 = self.params["g_KCC2"]           # max pump strength
         g_NKCl = self.params["g_NKCl"]           # max pump strength
 
+        # reassemble the block that change in time
+        self.matrix_blocks[2] = assemble_mixed(self.alist[2])
+        self.matrix_blocks[5] = assemble_mixed(self.alist[5])
+        # assemble right hand side
+        Llist = extract_blocks(self.L)
+        rhs_blocks = [assemble_mixed(L) for L in Llist]# if L is not None]
+
+        AA = PETScNestMatrix(self.matrix_blocks)
+        bb = PETScVector()
+        AA.init_vectors(bb, rhs_blocks)
+        # Convert VECNEST to standard vector for LU solver (MUMPS doesn't like VECNEST)
+        bb = PETScVector(PETSc.Vec().createWithArray(bb.vec().getArray()))
+        # Convert MATNEST to AIJ for LU solver
+        AA.convert_to_aij()
+
+        """
         # assemble part of system
         system = assemble_mixed_system(self.a == self.L, self.wh, self.bcs)
-        matrix_blocks = system[0]  # extract blocks of A
-        rhs_blocks = system[1]  # extract blocks of b
+        matrix_blocks = system[0]   # extract blocks of A
+        rhs_blocks = system[1]      # extract blocks of b
 
         AA = PETScNestMatrix(matrix_blocks)
         bb = PETScVector()
@@ -326,6 +345,7 @@ class Solver:
         bb = PETScVector(PETSc.Vec().createWithArray(bb.vec().getArray()))
         # Convert MATNEST to AIJ for LU solver
         AA.convert_to_aij()
+        """
 
         comm = self.exterior_mesh.mpi_comm()
         w = Vector(comm, self.Wi.dim() + self.We.dim() + self.Wg.dim())
@@ -483,6 +503,15 @@ class Solver:
 
         # create variational formulation
         self.create_variational_form(splitting_scheme=True, dirichlet_bcs=dirichlet_bcs)
+
+        # extract the subforms corresponding to each blocks of the formulation
+        self.alist = extract_blocks(self.a)
+        self.Llist = extract_blocks(self.L)
+        # build the variational problem : build needed mappings and sort the BCs
+        MixedLinearVariationalProblem(self.alist, self.Llist, self.wh.split(), self.bcs)
+        # assemble all the blocks
+        self.matrix_blocks = [assemble_mixed(a) for a in self.alist]
+        self.rhs_blocks = [assemble_mixed(L) for L in self.Llist]
 
         # shorthand
         phi_M = self.phi_M_prev

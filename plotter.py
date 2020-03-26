@@ -14,7 +14,6 @@ plt.rc("font", **font)
 plt.rc("text", usetex=True)
 mpl.rcParams["image.cmap"] = "jet"
 
-
 class Plotter:
     def __init__(self, res_2D, T, dt, f, f_emi, f_hyper, f_emi_hyper):
 
@@ -93,11 +92,10 @@ class Plotter:
 
         # define function spaces
         P1 = FiniteElement("CG", mesh.ufl_cell(), 1)
-        We = FunctionSpace(exterior_mesh, MixedElement(4 * [P1]))
-        Ve = FunctionSpace(exterior_mesh, P1)
+        R = FiniteElement('R', mesh.ufl_cell(), 0)
 
         # define functions
-        ue = Function(We)
+        Ve = FunctionSpace(exterior_mesh, P1)
         f_phi_e = Function(Ve)
         f_Na_e = Function(Ve)
         f_K_e = Function(Ve)
@@ -109,18 +107,32 @@ class Plotter:
 
         for n in range(1, int(T / dt)):
             if EMI:
-                # read file and append membrane potential
-                hdf5file.read(f_phi_e, "/exterior_solution/vector_" + str(n))
-                # check if 2D or 3D
-                phi_e[n - 1] = 1.0e3 * f_phi_e(x, y, z)  # 3D
-            else:
+                # create function space
+                We = FunctionSpace(exterior_mesh, MixedElement([P1] + [R]))
+                ue = Function(We)
+
                 # read file
                 hdf5file.read(ue, "/exterior_solution/vector_" + str(n))
 
+                # assign potential
+                assign(f_phi_e, ue.sub(0))
+
+                # append potential
+                phi_e[n - 1] = 1.0e3 * f_phi_e(x, y, z)  # 3D
+            else:
+                # create function space
+                We = FunctionSpace(exterior_mesh, MixedElement(4 * [P1] + [R]))
+                ue = Function(We)
+
+                # read file
+                hdf5file.read(ue, "/exterior_solution/vector_" + str(n))
+
+                # assign potentials and concentrations
                 assign(f_Na_e, ue.sub(0))   # ECS Na concentrations
                 assign(f_K_e, ue.sub(1))    # ECS K concentrations
                 assign(f_phi_e, ue.sub(3))  # ECS potential
 
+                # append potentials and concentrations
                 phi_e[n - 1] = 1.0e3 * f_phi_e(x, y, z)
                 Na_e[n - 1] = f_Na_e(x, y, z)
                 K_e[n - 1] = f_K_e(x, y, z)
@@ -186,7 +198,7 @@ class Plotter:
         # membrane potential during normal activity
         ax1 = fig.add_subplot(gs[0, 0])
         plt.title(r"Membrane potential")
-        plt.ylabel(r"$\phi_M$ (mV)")
+        plt.ylabel(r"$v$ (mV)")
         plt.xlabel(r"time (ms)")
         plt.yticks([-80, -60, -40, -20, 0, 20])
         plt.ylim(-100, 40)
@@ -196,7 +208,7 @@ class Plotter:
         # membrane potential during hyperactivity
         ax2 = fig.add_subplot(gs[1, 0])
         plt.title(r"Membrane potential")
-        plt.ylabel(r"$\phi_M$ (mV)")
+        plt.ylabel(r"$v$ (mV)")
         plt.xlabel(r"time (ms)")
         plt.yticks([-80, -60, -40, -20, 0, 20])
         plt.ylim(-100, 40)
@@ -205,7 +217,7 @@ class Plotter:
         # ECS potential during normal activity
         ax3 = fig.add_subplot(gs[0, 1])
         plt.title(r"ECS potential")
-        plt.ylabel(r"$\phi_M$ (mV)")
+        plt.ylabel(r"$u_e$ (mV)")
         plt.xlabel(r"time (ms)")
         plt.yticks([-1.0, -0.50, 0, 0.50, 1.0])
         plt.ylim(-1.15, 1.15)
@@ -214,7 +226,7 @@ class Plotter:
         # ECS potential during hyperactivity
         ax4 = fig.add_subplot(gs[1, 1])
         plt.title(r"ECS potential")
-        plt.ylabel(r"$\phi_M$ (mV)")
+        plt.ylabel(r"$u_e$ (mV)")
         plt.xlabel(r"time (ms)")
         plt.yticks([-1.0, -0.50, 0, 0.50, 1.0])
         plt.ylim(-1.15, 1.15)
@@ -225,7 +237,7 @@ class Plotter:
         for n, ax in enumerate([ax1, ax2, ax3, ax4]):
             ax.text(-0.1, 1.1, letters[n], transform=ax.transAxes)
         # save figure
-        plt.savefig("potentials.svg", format="svg")
+        plt.savefig("potentials.png")
 
         # create figure for ECS concentrations
         fig = plt.figure(figsize=(12 / 1.5, 25 / 3.0))
@@ -270,6 +282,6 @@ class Plotter:
         for n, ax in enumerate([ax1, ax2, ax3, ax4]):
             ax.text(-0.1, 1.1, letters[n], transform=ax.transAxes)
         # save figure
-        plt.savefig("concentrations.svg", format="svg")
+        plt.savefig("concentrations.png")
 
         return

@@ -12,13 +12,13 @@ and run the Docker container *ceciledc/fenics_mixed_dimensional:13-03-20* by:
 * Installing docker: https://docs.docker.com/engine/installation/
 * Build and start docker container with:
 
-        docker run -t -v ~/:/home/fenics -i ceciledc/fenics_mixed_dimensional:13-03-20
+        docker run -t -v $(pwd):/home/fenics -i ceciledc/fenics_mixed_dimensional:13-03-20
 
 ### Usage ###
 
 To run the code and reproduce the results, execute:
 
-        main.py
+        python main.py
 
 ### License ###
 

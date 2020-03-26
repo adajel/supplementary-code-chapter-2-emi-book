@@ -85,8 +85,25 @@ class Solver:
         E_K = params["E_K"]               # reversal potential K (V)
         E_Cl = params["E_Cl"]             # reversal potential Cl (V)
 
+        m_K = params["m_K"]
+        m_Na = params["m_Na"]
+        Na_i = params["Na_i"]
+        Na_e = params["Na_e"]
+        K_i = params["K_i"]
+        K_e = params["K_e"]
+        Cl_i = params["Cl_i"]
+        Cl_e = params["Cl_e"]
+        I_max = params["I_max"]
+        g_KCC2 = params["g_KCC2"]
+        g_NKCl = params["g_NKCl"]
+
         # set initial membrane potential
         self.phi_M_prev = interpolate(phi_M_init, self.Wg)
+
+        # other membrane mechanisms (pump, KCC2, NKCl)
+        I_pump = project(I_max / ((1 + m_K / K_e) ** 2 * (1 + m_Na / Na_i) ** 3), self.Wg)
+        I_KCC2 = g_KCC2 * ln((K_i * Cl_i) / (K_e * Cl_e))
+        I_NKCl = g_NKCl * (1.0 / (1.0 + exp(16.0 - K_e)) * (ln((K_i * Cl_i) / (K_e * Cl_e)) + ln((Na_i * Cl_i) / (Na_e * Cl_e))))
 
         # total channel current
         I_ch = (
@@ -94,6 +111,7 @@ class Solver:
             + g_ch_syn * (self.phi_M_prev - E_Na)
             + g_K_leak * (self.phi_M_prev - E_K)
             + g_Cl_leak * (self.phi_M_prev - E_Cl)
+            + (3 - 2) * I_pump + 4 * I_NKCl + 2 * I_KCC2
         )
 
         # define measures
@@ -366,7 +384,6 @@ class Solver:
         """ Save results to h5 file """
 
         self.h5_idx += 1
-        print(self.h5_idx)
         self.h5_file.write(self.u_p.sub(0), "/interior_solution", self.h5_idx)
         self.h5_file.write(self.u_p.sub(1), "/exterior_solution", self.h5_idx)
         self.h5_file.write(self.phi_M_prev, "/membrane_potential", self.h5_idx)
