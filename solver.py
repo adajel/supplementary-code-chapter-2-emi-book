@@ -332,21 +332,6 @@ class Solver:
         # Convert MATNEST to AIJ for LU solver
         AA.convert_to_aij()
 
-        """
-        # assemble part of system
-        system = assemble_mixed_system(self.a == self.L, self.wh, self.bcs)
-        matrix_blocks = system[0]   # extract blocks of A
-        rhs_blocks = system[1]      # extract blocks of b
-
-        AA = PETScNestMatrix(matrix_blocks)
-        bb = PETScVector()
-        AA.init_vectors(bb, rhs_blocks)
-        # Convert VECNEST to standard vector for LU solver (MUMPS doesn't like VECNEST)
-        bb = PETScVector(PETSc.Vec().createWithArray(bb.vec().getArray()))
-        # Convert MATNEST to AIJ for LU solver
-        AA.convert_to_aij()
-        """
-
         comm = self.exterior_mesh.mpi_comm()
         w = Vector(comm, self.Wi.dim() + self.We.dim() + self.Wg.dim())
 

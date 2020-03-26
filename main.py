@@ -238,11 +238,6 @@ if __name__ == "__main__":
     S_1b.setup_domain(mesh, subdomains, surfaces) # setup domains
     S_1b.solve_system_HH(n_steps_ode, filename=fname_emi)  # solve
 
-    fname_knpemi_hyper = ("results/knpemi_hyper/res_" + str(resolution) + "/")  # filename for results
-    #fname_emi = "results/emi/res_" + str(resolution) + "/"  # filename for results
-    fname_knpemi = "results/knpemi/res_" + str(resolution) + "/"  # filename for results
-    #fname_emi_hyper = ("results/emi_hyper/res_" + str(resolution) + "/")  # filename for results
-
     # files containing solutions
     f1 = fname_knpemi + "results.h5"
     f2 = fname_emi + "results.h5"
