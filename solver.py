@@ -183,8 +183,6 @@ class Solver:
 
             # get ion channel current
             ion["I_ch"] = ion["g_k"] * (self.phi_M_prev - ion["E"])
-            # add contribution to total channel current
-            I_ch += ion["I_ch"]
 
         # get ion concentrations at membrane
         Na_i = interpolate(ui_p.sub(0), self.Wg)
@@ -210,7 +208,11 @@ class Solver:
         # add potassium (K) contribution
         self.ion_list[1]["I_ch"] += -2 * self.I_pump + self.I_NKCl + self.I_KCC2
         # add chloride (Cl) contribution
-        self.ion_list[2]["I_ch"] += 2 * self.I_NKCl + self.I_KCC2
+        self.ion_list[2]["I_ch"] -= 2 * self.I_NKCl + self.I_KCC2
+
+        # add contribution from each ion to total channel current
+        for idx, ion in enumerate(self.ion_list):
+            I_ch += ion["I_ch"]
 
         # Initialize the variational form
         a00 = 0; a01 = 0; a02 = 0; L0 = 0
@@ -481,6 +483,7 @@ class Solver:
         # get Na of K from ion list
         Na = self.ion_list[0]
         K = self.ion_list[1]
+        Cl = self.ion_list[2]
 
         # add membrane conductivity of Hodgkin Huxley channels
         Na["g_k"] += g_Na_bar * m ** 3 * h
@@ -501,7 +504,10 @@ class Solver:
         # shorthand
         phi_M = self.phi_M_prev
         # derivatives for Hodgkin Huxley ODEs
-        dphidt = -(1 / C_M) * (Na["g_k"] * (phi_M - Na["E"]) + K["g_k"] * (phi_M - K["E"]))
+        dphidt = -(1 / C_M) * (Na["g_k"] * (phi_M - Na["E"])\
+                             + K["g_k"] * (phi_M - K["E"]) \
+                             + Cl["g_k"] * (phi_M - Cl["E"]) \
+                             + self.I_pump)
         dndt = self.alpha_n(phi_M) * (1 - n) - self.beta_n(phi_M) * n
         dmdt = self.alpha_m(phi_M) * (1 - m) - self.beta_m(phi_M) * m
         dhdt = self.alpha_h(phi_M) * (1 - h) - self.beta_h(phi_M) * h

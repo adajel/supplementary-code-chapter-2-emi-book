@@ -193,7 +193,7 @@ class Plotter:
         # create figure for potential
         fig = plt.figure(figsize=(12 / 1.5, 25 / 3.0))
         gs = GridSpec(nrows=2, ncols=2, width_ratios=[1, 1], height_ratios=[1, 1])
-        gs.update(left=0.05, right=0.95, bottom=0.05, top=0.93, wspace=0.3, hspace=0.3)
+        gs.update(left=0.1, right=0.95, bottom=0.1, top=0.93, wspace=0.3, hspace=0.3)
 
         # membrane potential during normal activity
         ax1 = fig.add_subplot(gs[0, 0])
@@ -219,8 +219,8 @@ class Plotter:
         plt.title(r"ECS potential")
         plt.ylabel(r"$u_e$ (mV)")
         plt.xlabel(r"time (ms)")
-        plt.yticks([-1.0, -0.50, 0, 0.50, 1.0])
-        plt.ylim(-1.15, 1.15)
+        plt.yticks([-0.8, -0.4, 0, 0.4, 0.8])
+        plt.ylim(-1.0, 1.0)
         plt.plot(time, phi_E, linewidth=3, label="KNP-EMI")
         plt.plot(time, phi_E_emi, "--", linewidth=3, label="EMI")
         # ECS potential during hyperactivity
@@ -228,21 +228,21 @@ class Plotter:
         plt.title(r"ECS potential")
         plt.ylabel(r"$u_e$ (mV)")
         plt.xlabel(r"time (ms)")
-        plt.yticks([-1.0, -0.50, 0, 0.50, 1.0])
-        plt.ylim(-1.15, 1.15)
-        plt.plot(time, phi_E, linewidth=3, label="KNP-EMI")
-        plt.plot(time, phi_E_emi, "--", linewidth=3, label="EMI")
+        plt.yticks([-0.8, -0.4, 0, 0.4, 0.8])
+        plt.ylim(-1.0, 1.0)
+        plt.plot(time, phi_E_hyper, linewidth=3, label="KNP-EMI")
+        plt.plot(time, phi_E_emi_hyper, "--", linewidth=3, label="EMI")
         # add numbering for the subplots (A, B, C etc)
         letters = [r"\textbf{A}", r"\textbf{C}", r"\textbf{B}", r"\textbf{D}"]
         for n, ax in enumerate([ax1, ax2, ax3, ax4]):
             ax.text(-0.1, 1.1, letters[n], transform=ax.transAxes)
         # save figure
-        plt.savefig("potentials.png")
+        plt.savefig("potentials.svg")
 
         # create figure for ECS concentrations
         fig = plt.figure(figsize=(12 / 1.5, 25 / 3.0))
         gs = GridSpec(nrows=2, ncols=2, width_ratios=[1, 1], height_ratios=[1, 1])
-        gs.update(left=0.05, right=0.95, bottom=0.05, top=0.93, wspace=0.3, hspace=0.3)
+        gs.update(left=0.1, right=0.95, bottom=0.1, top=0.93, wspace=0.3, hspace=0.3)
 
         # ECS Na concentration during normal activity
         ax1 = fig.add_subplot(gs[0, 0])
@@ -282,6 +282,6 @@ class Plotter:
         for n, ax in enumerate([ax1, ax2, ax3, ax4]):
             ax.text(-0.1, 1.1, letters[n], transform=ax.transAxes)
         # save figure
-        plt.savefig("concentrations.png")
+        plt.savefig("concentrations.svg")
 
         return

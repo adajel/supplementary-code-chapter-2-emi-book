@@ -10,7 +10,6 @@ import solver as solver
 import solver_emi as solver_emi
 import plotter as plotter
 
-
 def g_syn_hyper(g_syn_bar, a_syn, t):
     """ Stimulate axon, hyper activity """
 
@@ -48,7 +47,7 @@ if __name__ == "__main__":
 
     # time variables (seconds)
     dt = 1.0e-4        # global time step (s)
-    Tstop = 1.0e-1     # end time (s)
+    Tstop = 1.0e-2     # end time (s)
     n_steps_ode = 25   # number of steps for ODE solver
 
     # physical parameters
@@ -59,9 +58,9 @@ if __name__ == "__main__":
     g_Na_bar = 1200    # Na max conductivity (S/m^2)
     g_K_bar = 360      # K max conductivity (S/m^2)
 
-    g_Na_leak = Constant(0.1544) # Na leak membrane conductivity (S/(m^2))
-    g_K_leak = Constant(0.3125)  # K leak membrane conductivity (S/(m^2))
-    g_Cl_leak = Constant(0.2)    # Cl leak membrane conductivity (S/(m^2))
+    g_Na_leak = Constant(0.247)       # Na leak membrane conductivity (S/(m^2))
+    g_K_leak = Constant(0.5)          # K leak membrane conductivity (S/(m^2))
+    g_Cl_leak = Constant(0.2)         # Cl leak membrane conductivity (S/(m^2))
 
     # cotransporters
     g_KCC2 = 0.0034 # KCC2 cotransporter strength (A/m^2)
@@ -97,11 +96,15 @@ if __name__ == "__main__":
     A_e = Constant(64)        # intracellular anions (mol/m^3)
 
     # EMI parameters
-    sigma_i = 0.7276    # intracellular conductivity
-    sigma_e = 1.079     # extracellular conductivity
-    E_Na = 49.04e-3     # reversal potential Na (V)
-    E_K = -77.44e-3     # reversal potential K (V)
-    E_Cl = -55.54e-3    # reversal potential Cl (V)
+    psi = R*temperature/F
+    # intracellular conductivity
+    sigma_i = F/psi*(D_Na*Na_i_init + D_K*K_i_init + D_Cl*Cl_i_init + D_A*A_i)
+    # extracellular conductivity
+    sigma_e = F/psi*(D_Na*Na_e_init + D_K*K_e_init + D_Cl*Cl_e_init + D_A*A_e)
+    # reversal potentials
+    E_Na = R*temperature/F*ln(Na_e_init/Na_i_init)    # Na (V)
+    E_K = R*temperature/F*ln(K_e_init/K_i_init)       # K (V)
+    E_Cl = - R*temperature/F*ln(Cl_e_init/Cl_i_init)  # Cl (V)
 
     # set parameters
     params = {
@@ -188,9 +191,9 @@ if __name__ == "__main__":
     # file for results
     fname_knpemi_hyper = ("results/knpemi_hyper/res_" + str(resolution) + "/")  # filename for results
     # set ion channel conductivity
-    ion_list[0]["g_k"] = g_Na_leak + g_syn_hyper(g_syn_bar, a_syn, t_2a)  # Na
-    ion_list[1]["g_k"] = g_K_leak  # K
-    ion_list[2]["g_k"] = g_Cl_leak  # Cl
+    ion_list[0]["g_k"] = g_Na_leak + g_syn_hyper(g_syn_bar, a_syn, t_2a) # Na
+    ion_list[1]["g_k"] = g_K_leak                                        # K
+    ion_list[2]["g_k"] = g_Cl_leak                                       # Cl
     # solve system
     S_2a = solver.Solver(ion_list, t_2a, **params) # create solver
     S_2a.setup_domain(mesh, subdomains, surfaces)  # setup domains
@@ -201,6 +204,7 @@ if __name__ == "__main__":
     sys.stdout.write("\nRunning EMI hyperactivity")
     sys.stdout.write("\n--------------------------------\n")
     t_2b = Constant(0.0)  # time constant
+    # file for results
     fname_emi_hyper = ("results/emi_hyper/res_" + str(resolution) + "/")  # filename for results
     # set synaptic current
     params["g_ch_syn"] = g_syn_hyper(g_syn_bar, a_syn, t_2b)
@@ -230,6 +234,7 @@ if __name__ == "__main__":
     sys.stdout.write("\nRunning EMI normal activity")
     sys.stdout.write("\n--------------------------------\n")
     t_1b = Constant(0.0)  # time constant
+    # file for results
     fname_emi = "results/emi/res_" + str(resolution) + "/"  # filename for results
     # set synaptic current
     params["g_ch_syn"] = g_syn(g_syn_bar, a_syn, t_1b)

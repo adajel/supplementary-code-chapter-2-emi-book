@@ -100,10 +100,8 @@ class Solver:
         # set initial membrane potential
         self.phi_M_prev = interpolate(phi_M_init, self.Wg)
 
-        # other membrane mechanisms (pump, KCC2, NKCl)
-        I_pump = project(I_max / ((1 + m_K / K_e) ** 2 * (1 + m_Na / Na_i) ** 3), self.Wg)
-        I_KCC2 = g_KCC2 * ln((K_i * Cl_i) / (K_e * Cl_e))
-        I_NKCl = g_NKCl * (1.0 / (1.0 + exp(16.0 - K_e)) * (ln((K_i * Cl_i) / (K_e * Cl_e)) + ln((Na_i * Cl_i) / (Na_e * Cl_e))))
+        # other membrane mechanisms (pump)
+        self.I_pump = project(I_max / ((1 + m_K / K_e) ** 2 * (1 + m_Na / Na_i) ** 3), self.Wg)
 
         # total channel current
         I_ch = (
@@ -111,7 +109,7 @@ class Solver:
             + g_ch_syn * (self.phi_M_prev - E_Na)
             + g_K_leak * (self.phi_M_prev - E_K)
             + g_Cl_leak * (self.phi_M_prev - E_Cl)
-            + (3 - 2) * I_pump + 4 * I_NKCl + 2 * I_KCC2
+            + self.I_pump
         )
 
         # define measures
@@ -287,11 +285,13 @@ class Solver:
         C_M = self.params["C_M"]             # capacitance (F/m)
         g_Na_bar = self.params["g_Na_bar"]   # Na conductivity Hodgkin Huxley (S/m^2)
         g_K_bar = self.params["g_K_bar"]     # K conductivity Hodgkin Huxley (S/m^2)
-        g_K_leak = self.params["g_K_leak"]   # K leak conductivity (S/m^2)
         g_Na_leak = self.params["g_Na_leak"] # Na leak conductivity (S/m^2)
+        g_K_leak = self.params["g_K_leak"]   # K leak conductivity (S/m^2)
+        g_Cl_leak = self.params["g_Cl_leak"] # K leak conductivity (S/m^2)
         g_ch_syn = self.params["g_ch_syn"]   # K conductivity Hodgkin Huxley (S/m^2)
         E_Na = self.params["E_Na"]           # Na Nernst potential (V)
         E_K = self.params["E_K"]             # K Nernst potential (V)
+        E_Cl = self.params["E_Cl"]           # K Nernst potential (V)
         phi_M_init = self.params["phi_M_init"]
 
         # initial values
@@ -307,6 +307,7 @@ class Solver:
         # total channel currents conductivity
         g_Na = g_Na_leak + g_Na_bar * m ** 3 * h + g_ch_syn
         g_K = g_K_leak + g_K_bar * n ** 4
+        g_Cl = g_Cl_leak
 
         # create variational formulation
         self.create_variational_form(splitting_scheme=True)
@@ -314,7 +315,10 @@ class Solver:
         # shorthand
         phi_M = self.phi_M_prev
         # total channel current
-        I_ch = g_Na * (self.phi_M_prev - E_Na) + g_K * (self.phi_M_prev - E_K)
+        I_ch = g_Na * (self.phi_M_prev - E_Na) \
+             + g_K * (self.phi_M_prev - E_K) \
+             + g_Cl * (self.phi_M_prev - E_Cl) \
+             + self.I_pump
 
         # derivatives for Hodgkin Huxley ODEs
         dphidt = -(1 / C_M) * I_ch
