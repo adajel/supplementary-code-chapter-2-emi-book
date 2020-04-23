@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     # time variables (seconds)
     dt = 1.0e-4        # global time step (s)
-    Tstop = 1.0e-2     # end time (s)
+    Tstop = 1.0e-1     # end time (s)
     n_steps_ode = 25   # number of steps for ODE solver
 
     # physical parameters

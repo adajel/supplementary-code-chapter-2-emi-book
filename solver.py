@@ -204,11 +204,11 @@ class Solver:
         self.I_NKCl = project(g_NKCl * NKCl, self.Wg)
 
         # add sodium (Na) contribution
-        self.ion_list[0]["I_ch"] += 3 * self.I_pump - self.I_NKCl
+        self.ion_list[0]["I_ch"] += 3 * self.I_pump + self.I_NKCl
         # add potassium (K) contribution
-        self.ion_list[1]["I_ch"] += -2 * self.I_pump - self.I_NKCl + self.I_KCC2
+        self.ion_list[1]["I_ch"] += -2 * self.I_pump + self.I_NKCl + self.I_KCC2
         # add chloride (Cl) contribution
-        self.ion_list[2]["I_ch"] += 2 * self.I_NKCl - self.I_KCC2
+        self.ion_list[2]["I_ch"] += - 2 * self.I_NKCl - self.I_KCC2
 
         # add contribution from each ion to total channel current
         for idx, ion in enumerate(self.ion_list):
