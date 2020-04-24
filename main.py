@@ -58,8 +58,8 @@ if __name__ == "__main__":
     g_Na_bar = 1200    # Na max conductivity (S/m^2)
     g_K_bar = 360      # K max conductivity (S/m^2)
 
-    g_Na_leak = Constant(0.247)       # Na leak membrane conductivity (S/(m^2))
-    g_K_leak = Constant(0.5)          # K leak membrane conductivity (S/(m^2))
+    g_Na_leak = Constant(0.281)       # Na leak membrane conductivity (S/(m^2))
+    g_K_leak = Constant(0.43)          # K leak membrane conductivity (S/(m^2))
     g_Cl_leak = Constant(0.2)         # Cl leak membrane conductivity (S/(m^2))
 
     # cotransporters
@@ -92,8 +92,8 @@ if __name__ == "__main__":
 
     Na_e_init = Constant(120) # extracellular Na concentration (mol/m^3)
     K_e_init = Constant(4)    # extracellular K concentration (mol/m^3)
-    Cl_e_init = Constant(60)  # extracellular Cl concentration (mol/m^3)
-    A_e = Constant(64)        # intracellular anions (mol/m^3)
+    Cl_e_init = Constant(112) # extracellular Cl concentration (mol/m^3)
+    A_e = Constant(12)        # intracellular anions (mol/m^3)
 
     # EMI parameters
     psi = R*temperature/F
