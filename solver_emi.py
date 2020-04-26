@@ -94,8 +94,6 @@ class Solver:
         Cl_i = params["Cl_i"]
         Cl_e = params["Cl_e"]
         I_max = params["I_max"]
-        g_KCC2 = params["g_KCC2"]
-        g_NKCl = params["g_NKCl"]
 
         # set initial membrane potential
         self.phi_M_prev = interpolate(phi_M_init, self.Wg)

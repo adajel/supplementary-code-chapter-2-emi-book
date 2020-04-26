@@ -58,28 +58,28 @@ if __name__ == "__main__":
     g_Na_bar = 1200    # Na max conductivity (S/m^2)
     g_K_bar = 360      # K max conductivity (S/m^2)
 
-    g_Na_leak = Constant(0.281)       # Na leak membrane conductivity (S/(m^2))
-    g_K_leak = Constant(0.43)          # K leak membrane conductivity (S/(m^2))
-    g_Cl_leak = Constant(0.2)         # Cl leak membrane conductivity (S/(m^2))
+    g_Na_leak = Constant(0.281) # Na leak membrane conductivity (S/(m^2))
+    g_K_leak = Constant(0.43)   # K leak membrane conductivity (S/(m^2))
+    g_Cl_leak = Constant(0.2)   # Cl leak membrane conductivity (S/(m^2))
 
     # cotransporters
-    g_KCC2 = 0.0034 # KCC2 cotransporter strength (A/m^2)
-    g_NKCl = 0.023  # NKCl cotransporter strength (A/m^2)
+    g_KCC2 = 0.0034   # KCC2 cotransporter strength (A/m^2)
+    g_NKCC1 = 0.023   # NKCC1 cotransporter strength (A/m^2)
 
     # pump
     I_max = 0.1804176 # max pump strength (A/m^2)
     m_K = 3.0         # threshold ECS K (mol/m^3)
     m_Na = 12.0       # threshold ICS Na (mol/m^3)
 
-    a_syn = 0.002   # synaptic time constant (s)
-    g_syn_bar = 40  # synaptic conductivity (A/m)
+    a_syn = 0.002     # synaptic time constant (s)
+    g_syn_bar = 40    # synaptic conductivity (A/m)
 
     D_Na = Constant(1.33e-9) # Na diffusion coefficient (m^2/s)
     D_K = Constant(1.96e-9)  # K diffusion coefficient (m^2/s)
     D_Cl = Constant(2.03e-9) # Cl diffusion coefficient (m^2/s)
     D_A = Constant(2.03e-9)  # Anion diffusion coefficient (m^2/s)
 
-    z_A = Constant(-1.0)  # valence of anions
+    z_A = Constant(-1.0)     # valence of anions
 
     # initial conditions
     phi_M_init = Constant(-0.0677379)   # membrane potential (V)
@@ -127,7 +127,7 @@ if __name__ == "__main__":
         "E_K": E_K,
         "E_Cl": E_Cl,
         "g_KCC2": g_KCC2,
-        "g_NKCl": g_NKCl,
+        "g_NKCC1": g_NKCC1,
         "g_Na_leak": g_Na_leak,
         "g_K_leak": g_K_leak,
         "g_Cl_leak": g_Cl_leak,

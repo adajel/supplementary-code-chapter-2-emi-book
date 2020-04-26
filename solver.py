@@ -94,11 +94,6 @@ class Solver:
         psi = R * temperature / F           # help variable psi
         C_M = params["C_M"]                 # capacitance (F)
         phi_M_init = params["phi_M_init"]   # initial membrane potential (V)
-        m_Na = params["m_Na"]               # threshold pump ICS Na
-        m_K = params["m_K"]                 # threshold pump ECS K
-        I_max = params["I_max"]             # max pump strength
-        g_KCC2 = params["g_KCC2"]           # KCC2 cotransporter
-        g_NKCl = params["g_NKCl"]           # NKCl cotransporter
 
         # set initial membrane potential
         self.phi_M_prev = interpolate(phi_M_init, self.Wg)
@@ -192,23 +187,21 @@ class Solver:
         Cl_i = interpolate(ui_p.sub(2), self.Wg)
         Cl_e = interpolate(ue_p.sub(2), self.Wg)
 
-        # Na/K pump
-        self.I_pump = project(I_max / ((1 + m_K / K_e) ** 2 * (1 + m_Na / Na_i) ** 3), self.Wg)
+        # Na/K pump current
+        self.I_pump = project(self.get_I_pump(K_e, Na_i), self.Wg)
 
-        # KCC2 cotransporter
-        KCC2 = ln((K_i * Cl_i) / (K_e * Cl_e))
-        self.I_KCC2 = project(g_KCC2 * KCC2, self.Wg)
+        # KCC2 cotransporter current
+        self.I_KCC2 = project(self.get_I_KCC2(K_i, K_e, Cl_i, Cl_e), self.Wg)
 
-        # NaKCl2 cotransporter
-        NKCl = (1.0 / (1.0 + exp(16.0 - K_e)) * (ln((K_i * Cl_i) / (K_e * Cl_e)) + ln((Na_i * Cl_i) / (Na_e * Cl_e))))
-        self.I_NKCl = project(g_NKCl * NKCl, self.Wg)
+        # NaKCl cotransporter current
+        self.I_NKCC1 = project(self.get_I_NKCC1(Na_i, Na_e, K_i, K_e, Cl_i, Cl_e), self.Wg)
 
         # add sodium (Na) contribution
-        self.ion_list[0]["I_ch"] += 3 * self.I_pump + self.I_NKCl
+        self.ion_list[0]["I_ch"] += 3 * self.I_pump + self.I_NKCC1
         # add potassium (K) contribution
-        self.ion_list[1]["I_ch"] += -2 * self.I_pump + self.I_NKCl + self.I_KCC2
+        self.ion_list[1]["I_ch"] += - 2 * self.I_pump + self.I_NKCC1 + self.I_KCC2
         # add chloride (Cl) contribution
-        self.ion_list[2]["I_ch"] += - 2 * self.I_NKCl - self.I_KCC2
+        self.ion_list[2]["I_ch"] += - 2 * self.I_NKCC1 - self.I_KCC2
 
         # add contribution from each ion to total channel current
         for idx, ion in enumerate(self.ion_list):
@@ -315,9 +308,9 @@ class Solver:
         temperature = self.params["temperature"] # temperature (K)
         m_Na = self.params["m_Na"]               # threshold pump ICS Na
         m_K = self.params["m_K"]                 # threshold pump ECS K
-        I_max = self.params["I_max"]             # max pump strength
-        g_KCC2 = self.params["g_KCC2"]           # max pump strength
-        g_NKCl = self.params["g_NKCl"]           # max pump strength
+        I_max = self.params["I_max"]             # pump strength
+        g_KCC2 = self.params["g_KCC2"]           # KCC2 strength
+        g_NKCC1 = self.params["g_NKCC1"]         # NKCC1 strength
 
         # reassemble the block that change in time
         self.matrix_blocks[2] = assemble_mixed(self.alist[2])
@@ -398,17 +391,16 @@ class Solver:
                 Cl_e = ke_prev_g
 
         # update NaK-ATPase pump
-        updated_I_pump = project(I_max / ((1 + m_K / K_e) ** 2 * (1 + m_Na / Na_i) ** 3), self.Wg)
+        updated_I_pump = project(self.get_I_pump(K_e, Na_i), self.Wg)
         self.I_pump.assign(updated_I_pump)
 
         # update KCC2 exchnager
-        updated_I_KCC2 = project(g_KCC2 * ln((K_i * Cl_i) / (K_e * Cl_e)), self.Wg)
+        updated_I_KCC2 = project(self.get_I_KCC2(K_i, K_e, Cl_i, Cl_e), self.Wg)
         self.I_KCC2.assign(updated_I_KCC2)
 
-        # NaKCl2 cotransporter
-        u_NKCl = (1.0 / (1.0 + exp(16.0 - K_e)) * (ln((K_i * Cl_i) / (K_e * Cl_e)) + ln((Na_i * Cl_i) / (Na_e * Cl_e))))
-        updated_I_NKCl = project(g_NKCl * u_NKCl, self.Wg)
-        self.I_NKCl.assign(updated_I_NKCl)
+        # update NKCC1 cotransporter
+        updated_I_NKCC1 = project(self.get_I_NKCC1(Na_i, Na_e, K_i, K_e, Cl_i, Cl_e), self.Wg)
+        self.I_NKCC1.assign(updated_I_NKCC1)
 
         return
 
@@ -458,6 +450,30 @@ class Solver:
         V = 1000 * (V_M - V_rest)       # convert from mV to V
 
         return 1.0e3 / (exp((30.0 - V) / 10.0) + 1)
+
+    def get_I_pump(self, K_e, Na_i):
+        """ Na/K pump current """
+
+        m_K = self.params["m_K"]
+        m_Na = self.params["m_Na"]
+        I_max = self.params["I_max"]
+
+        return I_max / ((1 + m_K / K_e) ** 2 * (1 + m_Na / Na_i) ** 3)
+
+    def get_I_KCC2(self, K_i, K_e, Cl_i, Cl_e):
+        """ KCC2 cotransporter current """
+
+        g_KCC2 = self.params["g_KCC2"]
+
+        return g_KCC2 * ln((K_i * Cl_i) / (K_e * Cl_e))
+
+    def get_I_NKCC1(self, Na_i, Na_e, K_i, K_e, Cl_i, Cl_e):
+        """ NaKCl cotransporter current """
+
+        g_NKCC1 = self.params["g_NKCC1"]
+        f_NKCC1 = 1.0 / (1.0 + exp(16.0 - K_e))
+
+        return g_NKCC1 * f_NKCC1 * (ln((K_i * Cl_i) / (K_e * Cl_e)) + ln((Na_i * Cl_i) / (Na_e * Cl_e)))
 
     def solve_system_HH(self, n_steps_ode, filename, dirichlet_bcs=False):
         """ Solve KNP-EMI with Hodgkin Huxley (HH) dynamics on membrane using a
